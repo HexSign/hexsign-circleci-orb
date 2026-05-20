@@ -1,0 +1,76 @@
+description: |
+  One-shot job: install the HexSign CLI and download requested certificates
+  and/or provisioning profiles into a directory, then persist the directory
+  to the CircleCI workspace so downstream jobs can attach it.
+
+  Requires `HEXSIGN_CLIENT_ID` and `HEXSIGN_CLIENT_SECRET` in the
+  environment — provide them via a CircleCI context attached to the
+  workflow that calls this job.
+
+  At least one of `certificate_id`, `certificate_type`, `profile_id`, or
+  `bundle_id` must be supplied.
+
+executor: default
+
+parameters:
+  cli_version:
+    type: string
+    default: latest
+    description: hexsign-cli release tag (e.g. v0.2.1) or "latest".
+  certificate_id:
+    type: string
+    default: ""
+    description: Single certificate UUID. Mutually exclusive with `certificate_type`.
+  certificate_type:
+    type: string
+    default: ""
+    description: Apple cert type for bulk download (e.g. IOS_DISTRIBUTION). Requires `team_id`.
+  profile_id:
+    type: string
+    default: ""
+    description: Single profile UUID. Mutually exclusive with `bundle_id`.
+  bundle_id:
+    type: string
+    default: ""
+    description: Bundle identifier — downloads every matching profile.
+  team_id:
+    type: string
+    default: ""
+    description: Apple Developer team ID. Required with `certificate_type`; optional with `bundle_id`.
+  output_dir:
+    type: string
+    default: build/sign
+    description: Directory to write artefacts into. Persisted to the workspace.
+  workspace_root:
+    type: string
+    default: "."
+    description: |
+      Root passed to persist_to_workspace. Defaults to the working directory so
+      downstream jobs can `attach_workspace` and find `output_dir` at the same
+      relative path.
+
+steps:
+  - run:
+      name: Validate inputs
+      environment:
+        HEXSIGN_PARAM_CERTIFICATE_ID: "<< parameters.certificate_id >>"
+        HEXSIGN_PARAM_CERTIFICATE_TYPE: "<< parameters.certificate_type >>"
+        HEXSIGN_PARAM_PROFILE_ID: "<< parameters.profile_id >>"
+        HEXSIGN_PARAM_BUNDLE_ID: "<< parameters.bundle_id >>"
+      command: <<include(scripts/fetch_validate.sh)>>
+  - install:
+      version: << parameters.cli_version >>
+  - certificates_download:
+      id: << parameters.certificate_id >>
+      type: << parameters.certificate_type >>
+      team_id: << parameters.team_id >>
+      output_dir: << parameters.output_dir >>
+  - profiles_download:
+      id: << parameters.profile_id >>
+      bundle_id: << parameters.bundle_id >>
+      team_id: << parameters.team_id >>
+      output_dir: << parameters.output_dir >>
+  - persist_to_workspace:
+      root: << parameters.workspace_root >>
+      paths:
+        - << parameters.output_dir >>

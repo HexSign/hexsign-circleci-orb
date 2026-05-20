@@ -1,0 +1,44 @@
+description: |
+  Download one signing certificate by ID, or every certificate of a given
+  Apple cert type for a single Apple Developer team (bulk mode).
+
+  Requires `HEXSIGN_CLIENT_ID` and `HEXSIGN_CLIENT_SECRET` in the environment —
+  set them in a CircleCI context and attach the context to your workflow.
+
+  If both `id` and `type` are empty, the step is a no-op (logs and exits 0).
+  Use this so a single workflow can be parameterised to fetch zero, one, or
+  many artefacts without conditional logic at the workflow level.
+
+parameters:
+  id:
+    description: HexSign certificate UUID. Mutually exclusive with `type`.
+    type: string
+    default: ""
+  type:
+    description: |
+      Apple certificate type (e.g. IOS_DISTRIBUTION) for bulk download.
+      Requires `team_id`. Accepted values: IOS_DEVELOPMENT, IOS_DISTRIBUTION,
+      MAC_APP_DEVELOPMENT, MAC_APP_DISTRIBUTION, MAC_INSTALLER_DISTRIBUTION,
+      DEVELOPER_ID_APPLICATION, DEVELOPER_ID_APPLICATION_G2,
+      DEVELOPER_ID_KEXT, DEVELOPER_ID_KEXT_G2, DEVELOPER_ID_INSTALLER,
+      DEVELOPMENT, DISTRIBUTION, PASS_TYPE_ID, PASS_TYPE_ID_WITH_NFC.
+    type: string
+    default: ""
+  team_id:
+    description: Apple Developer team ID. Required when `type` is set.
+    type: string
+    default: ""
+  output_dir:
+    description: Directory to write `.p12` and `.password` files into. Created if missing.
+    type: string
+    default: build/sign
+
+steps:
+  - run:
+      name: Download HexSign certificate(s)
+      environment:
+        HEXSIGN_PARAM_ID: "<< parameters.id >>"
+        HEXSIGN_PARAM_TYPE: "<< parameters.type >>"
+        HEXSIGN_PARAM_TEAM_ID: "<< parameters.team_id >>"
+        HEXSIGN_PARAM_OUTPUT_DIR: "<< parameters.output_dir >>"
+      command: <<include(scripts/certificates_download.sh)>>

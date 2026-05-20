@@ -1,0 +1,35 @@
+description: |
+  Download one provisioning profile by ID, or every profile matching a bundle
+  identifier (bulk mode, rotation-safe).
+
+  Requires `HEXSIGN_CLIENT_ID` and `HEXSIGN_CLIENT_SECRET` in the environment.
+
+  If both `id` and `bundle_id` are empty, the step is a no-op.
+
+parameters:
+  id:
+    description: HexSign provisioning profile UUID. Mutually exclusive with `bundle_id`.
+    type: string
+    default: ""
+  bundle_id:
+    description: App bundle identifier — downloads every matching `.mobileprovision`.
+    type: string
+    default: ""
+  team_id:
+    description: Optional Apple Developer team ID to disambiguate when the same bundle exists in multiple linked Apple accounts.
+    type: string
+    default: ""
+  output_dir:
+    description: Directory to write `.mobileprovision` files into. Created if missing.
+    type: string
+    default: build/sign
+
+steps:
+  - run:
+      name: Download HexSign provisioning profile(s)
+      environment:
+        HEXSIGN_PARAM_ID: "<< parameters.id >>"
+        HEXSIGN_PARAM_BUNDLE_ID: "<< parameters.bundle_id >>"
+        HEXSIGN_PARAM_TEAM_ID: "<< parameters.team_id >>"
+        HEXSIGN_PARAM_OUTPUT_DIR: "<< parameters.output_dir >>"
+      command: <<include(scripts/profiles_download.sh)>>

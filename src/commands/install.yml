@@ -1,0 +1,33 @@
+description: |
+  Install the HexSign CLI on the runner. Downloads the matching tarball from
+  GitHub Releases, verifies it against the release's checksums.txt, and places
+  the `hexsign` binary on `$PATH` via `$BASH_ENV`.
+
+  Supported runners: Linux (amd64/arm64) and macOS (amd64/arm64). Windows
+  executors are not supported by this command — install the CLI manually if
+  you need Windows.
+
+parameters:
+  version:
+    description: HexSign CLI release tag (e.g. v0.2.1), or "latest" for the most recent release.
+    type: string
+    default: latest
+  install_dir:
+    description: |
+      Directory to install the binary into. Must be writable. Added to PATH
+      for subsequent steps via $BASH_ENV.
+    type: string
+    default: /usr/local/bin
+  use_sudo:
+    description: Prefix install commands with `sudo`. Required on most macOS executors and on cimg/base.
+    type: boolean
+    default: true
+
+steps:
+  - run:
+      name: Install HexSign CLI
+      environment:
+        HEXSIGN_PARAM_VERSION: "<< parameters.version >>"
+        HEXSIGN_PARAM_INSTALL_DIR: "<< parameters.install_dir >>"
+        HEXSIGN_PARAM_USE_SUDO: "<< parameters.use_sudo >>"
+      command: <<include(scripts/install.sh)>>

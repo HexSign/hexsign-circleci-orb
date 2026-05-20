@@ -1,0 +1,10 @@
+version: 2.1
+
+description: |
+  HexSign — manage Apple signing material (certificates, provisioning profiles,
+  devices, identifiers) from your CircleCI pipelines. Wraps the hexsign CLI:
+  https://github.com/hexsign/hexsign-cli
+
+display:
+  home_url: https://hexsign.io
+  source_url: https://github.com/hexsign/hexsign-circleci-orb

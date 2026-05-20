@@ -1,0 +1,7 @@
+description: |
+  Small Linux executor with curl, jq, and tar available — enough to install
+  the hexsign CLI and download signing material. Override with your own
+  executor (e.g. macos) when you need to invoke xcodebuild from the same job.
+
+docker:
+  - image: cimg/base:current

@@ -1,0 +1,6 @@
+orb.yml
+build/
+*.p12
+*.password
+*.mobileprovision
+.DS_Store

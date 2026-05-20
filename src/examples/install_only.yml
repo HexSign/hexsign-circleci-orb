@@ -1,0 +1,27 @@
+description: |
+  Install the CLI inside an existing macOS xcodebuild job and call it directly.
+  Useful when you don't want a separate fetch job and the workspace round-trip.
+
+usage:
+  version: 2.1
+  orbs:
+    hexsign: hexsign/hexsign@1.0.0
+  jobs:
+    archive:
+      macos:
+        xcode: 16.4.0
+      steps:
+        - checkout
+        - hexsign/install
+        - hexsign/certificates_download:
+            id: $HEXSIGN_CERT_ID
+            output_dir: build/sign
+        - hexsign/profiles_download:
+            id: $HEXSIGN_PROFILE_ID
+            output_dir: build/sign
+        - run: xcodebuild -scheme MyApp archive
+  workflows:
+    release:
+      jobs:
+        - archive:
+            context: hexsign

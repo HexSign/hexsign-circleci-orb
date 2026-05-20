@@ -1,0 +1,36 @@
+description: |
+  Use the `fetch` job to pull signing material in a small Linux container,
+  then attach the workspace inside a macOS xcodebuild job. Credentials live
+  in a CircleCI context named `hexsign`.
+
+usage:
+  version: 2.1
+  orbs:
+    hexsign: hexsign/hexsign@1.0.0
+  jobs:
+    archive:
+      macos:
+        xcode: 16.4.0
+      steps:
+        - checkout
+        - attach_workspace:
+            at: .
+        - run:
+            name: Import signing material
+            command: |
+              security create-keychain -p "" build.keychain
+              security import build/sign/*.p12 -k build.keychain \
+                -P "$(cat build/sign/*.password)" -T /usr/bin/codesign
+              mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
+              cp build/sign/*.mobileprovision ~/Library/MobileDevice/Provisioning\ Profiles/
+        - run: xcodebuild -scheme MyApp archive
+  workflows:
+    release:
+      jobs:
+        - hexsign/fetch:
+            context: hexsign
+            certificate_id: $HEXSIGN_CERT_ID
+            profile_id: $HEXSIGN_PROFILE_ID
+            output_dir: build/sign
+        - archive:
+            requires: [hexsign/fetch]
