@@ -24,7 +24,7 @@ parameters:
   certificate_type:
     type: string
     default: ""
-    description: Apple cert type for bulk download (e.g. IOS_DISTRIBUTION). Requires `team_id`.
+    description: Apple cert type for bulk download (e.g. DISTRIBUTION). Requires `team_id`.
   profile_id:
     type: string
     default: ""

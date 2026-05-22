@@ -16,7 +16,7 @@ parameters:
     default: ""
   type:
     description: |
-      Apple certificate type (e.g. IOS_DISTRIBUTION) for bulk download.
+      Apple certificate type (e.g. DISTRIBUTION) for bulk download.
       Requires `team_id`. Accepted values: IOS_DEVELOPMENT, IOS_DISTRIBUTION,
       MAC_APP_DEVELOPMENT, MAC_APP_DISTRIBUTION, MAC_INSTALLER_DISTRIBUTION,
       DEVELOPER_ID_APPLICATION, DEVELOPER_ID_APPLICATION_G2,

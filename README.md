@@ -71,7 +71,7 @@ Downloads one certificate (`id`) or every cert of a type for a team (`type` + `t
 | Parameter | Type | Default | Description |
 |---|---|---|---|
 | `id`         | string | `""` | Single certificate UUID. Mutually exclusive with `type`. |
-| `type`       | string | `""` | Apple cert type (e.g. `IOS_DISTRIBUTION`). Requires `team_id`. |
+| `type`       | string | `""` | Apple cert type (e.g. `DISTRIBUTION`). Requires `team_id`. |
 | `team_id`    | string | `""` | Apple Developer team ID. |
 | `output_dir` | string | `build/sign` | Directory for `.p12` and `.password` files. |
 | `keychain`   | string | `""` | macOS only. Keychain to create and import the downloaded cert(s) into, ready for codesigning. Needs a macOS executor. |
@@ -144,7 +144,7 @@ workflows:
 ```yaml
 - hexsign/fetch:
     context: hexsign
-    certificate_type: IOS_DISTRIBUTION
+    certificate_type: DISTRIBUTION
     team_id:          ABCDE12345
     bundle_id:        com.example.app
     output_dir:       build/sign
