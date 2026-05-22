@@ -23,6 +23,13 @@ parameters:
     description: Directory to write `.mobileprovision` files into. Created if missing.
     type: string
     default: build/sign
+  install:
+    description: |
+      macOS only. When true, each downloaded profile is also copied into
+      ~/Library/MobileDevice/Provisioning Profiles, where Xcode discovers it —
+      no manual install step needed. Requires a macOS executor.
+    type: boolean
+    default: false
 
 steps:
   - run:
@@ -32,4 +39,5 @@ steps:
         HEXSIGN_PARAM_BUNDLE_ID: "<< parameters.bundle_id >>"
         HEXSIGN_PARAM_TEAM_ID: "<< parameters.team_id >>"
         HEXSIGN_PARAM_OUTPUT_DIR: "<< parameters.output_dir >>"
+        HEXSIGN_PARAM_INSTALL: "<< parameters.install >>"
       command: <<include(scripts/profiles_download.sh)>>

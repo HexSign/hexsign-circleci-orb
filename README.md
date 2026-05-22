@@ -74,6 +74,7 @@ Downloads one certificate (`id`) or every cert of a type for a team (`type` + `t
 | `type`       | string | `""` | Apple cert type (e.g. `IOS_DISTRIBUTION`). Requires `team_id`. |
 | `team_id`    | string | `""` | Apple Developer team ID. |
 | `output_dir` | string | `build/sign` | Directory for `.p12` and `.password` files. |
+| `keychain`   | string | `""` | macOS only. Keychain to create and import the downloaded cert(s) into, ready for codesigning. Needs a macOS executor. |
 
 No-op when both `id` and `type` are empty.
 
@@ -87,6 +88,7 @@ Downloads one profile (`id`) or every profile for a bundle (`bundle_id`).
 | `bundle_id`  | string | `""` | App bundle identifier. |
 | `team_id`    | string | `""` | Optional, disambiguates across linked Apple accounts. |
 | `output_dir` | string | `build/sign` | Directory for `.mobileprovision` files. |
+| `install`    | boolean | `false` | macOS only. Install each downloaded profile into the directory Xcode reads. Needs a macOS executor. |
 
 No-op when both `id` and `bundle_id` are empty.
 
@@ -105,6 +107,8 @@ One-shot job that runs `install` + `certificates_download` + `profiles_download`
 | `bundle_id`         | string | `""` | Bundle id for bulk profile download. |
 | `team_id`           | string | `""` | Apple Developer team id. |
 | `output_dir`        | string | `build/sign` | Output directory. |
+| `keychain`          | string | `""` | macOS only. Keychain to import the downloaded cert(s) into. Needs a macOS executor. |
+| `install_profile`   | boolean | `false` | macOS only. Install each downloaded profile into the directory Xcode reads. Needs a macOS executor. |
 | `workspace_root`    | string | `.`      | Root passed to `persist_to_workspace`. |
 
 At least one of `certificate_id`, `certificate_type`, `profile_id`, or `bundle_id` must be set.

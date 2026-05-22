@@ -32,6 +32,14 @@ parameters:
     description: Directory to write `.p12` and `.password` files into. Created if missing.
     type: string
     default: build/sign
+  keychain:
+    description: |
+      macOS only. Path to a keychain to create and import the downloaded
+      certificate(s) into, configured so `codesign` can use them without an
+      interactive prompt. The keychain must not already exist. Leave empty to
+      only write the `.p12` / `.password` files (requires a macOS executor).
+    type: string
+    default: ""
 
 steps:
   - run:
@@ -41,4 +49,5 @@ steps:
         HEXSIGN_PARAM_TYPE: "<< parameters.type >>"
         HEXSIGN_PARAM_TEAM_ID: "<< parameters.team_id >>"
         HEXSIGN_PARAM_OUTPUT_DIR: "<< parameters.output_dir >>"
+        HEXSIGN_PARAM_KEYCHAIN: "<< parameters.keychain >>"
       command: <<include(scripts/certificates_download.sh)>>

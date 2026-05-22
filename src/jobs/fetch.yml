@@ -41,6 +41,20 @@ parameters:
     type: string
     default: build/sign
     description: Directory to write artefacts into. Persisted to the workspace.
+  keychain:
+    type: string
+    default: ""
+    description: |
+      macOS only. Path to a keychain to create and import the downloaded
+      certificate(s) into, ready for codesigning. Requires a macOS executor —
+      override the default `executor` accordingly. Empty disables import.
+  install_profile:
+    type: boolean
+    default: false
+    description: |
+      macOS only. When true, each downloaded profile is also installed into
+      ~/Library/MobileDevice/Provisioning Profiles, where Xcode finds it.
+      Requires a macOS executor.
   workspace_root:
     type: string
     default: "."
@@ -65,11 +79,13 @@ steps:
       type: << parameters.certificate_type >>
       team_id: << parameters.team_id >>
       output_dir: << parameters.output_dir >>
+      keychain: << parameters.keychain >>
   - profiles_download:
       id: << parameters.profile_id >>
       bundle_id: << parameters.bundle_id >>
       team_id: << parameters.team_id >>
       output_dir: << parameters.output_dir >>
+      install: << parameters.install_profile >>
   - persist_to_workspace:
       root: << parameters.workspace_root >>
       paths:
